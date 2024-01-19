@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_TAG_NAME = sh(script: 'git describe --tags --abbrev=0', returnStdout: true).trim()
+    }
+
+    stages {
+        stage('Version Check') {
+            steps {
+                script {
+                    tag = sh(script: 'echo ${GIT_TAG_NAME} | cut -d"v" -f2', returnStdout: true).trim()
+                    echo "===> Tag: ${tag}"
+
+                    arr = sh(script: 'echo ${tag} | tr "." "\\n"', returnStdout: true).readLines()
+                    
+                    firstPos = arr[0]
+                    secPos = arr[1]
+                    thirdPos = arr[2]
+
+                    // Check version conditions
+                    if ((thirdPos == null || thirdPos == '0') && (secPos.toInteger() <= 99)) {
+                        echo "===> This is a Deployment Version & Version Number ${tag}"
+                        // You can add any deployment steps here if needed
+                        // For a simple Flask app, starting the Docker container may be sufficient
+                        sh 'docker run -p 5000:5000 -d --name my_flask_app_container flask-app'
+
+
+                    } else {
+                        echo "This is a Minor Version & Tag ${tag}"
+                        error "Exit 3: This is a minor version."
+                    }
+                }
+            }
+        }
+    }
+
+    
+}
