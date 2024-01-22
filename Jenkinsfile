@@ -37,7 +37,6 @@ pipeline {
                         if (patch == '0') {
                             // Execute build if the last digit is 0
                             sh 'docker build -t myflaskapp .'
-                            sh 'docker run -p 5000:5000 myflaskapp'
                             // Your build steps go here
                         } else if (patch == '1') {
                             // Exit the pipeline with a message if the last digit is 1
