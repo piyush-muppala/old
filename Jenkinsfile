@@ -9,7 +9,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git
                 script {
                     checkout scm
                 }
@@ -27,9 +26,10 @@ pipeline {
 
                     // Check if the version number matches the pattern
                     if (versionMatch) {
-                        def major = versionMatch[0][1]
-                        def minor = versionMatch[0][2]
-                        def patch = versionMatch[0][3]
+                        // Extract values from Matcher and assign to serializable variables
+                        def major = versionMatch[0][1] as String
+                        def minor = versionMatch[0][2] as String
+                        def patch = versionMatch[0][3] as String
 
                         echo "Major: ${major}, Minor: ${minor}, Patch: ${patch}"
 
