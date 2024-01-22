@@ -37,6 +37,8 @@ pipeline {
                         if (patch == '0') {
                             // Execute build if the last digit is 0
                             echo 'Executing build...'
+
+                            // Run Docker commands outside the script block
                             sh 'docker build -t myflaskapp .'
                             sh 'docker run -p 5000:5000 myflaskapp'
                             // Your build steps go here
