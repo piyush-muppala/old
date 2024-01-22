@@ -30,20 +30,21 @@ pipeline {
                         def versionInfo = versionMatch[0].findAll(/\d+/)
 
                         // Extract major, minor, and patch versions
-                        def major = versionInfo[0]
-                        def minor = versionInfo[1]
-                        def patch = versionInfo[2]
+                        def versionList = versionInfo.collect { it.toInteger() }
+                        def major = versionList[0]
+                        def minor = versionList[1]
+                        def patch = versionList[2]
 
                         echo "Major: ${major}, Minor: ${minor}, Patch: ${patch}"
 
                         // Check the last digit of the version
-                        if (patch == '0') {
+                        if (patch == 0) {
                             // Execute build if the last digit is 0
                             echo 'Executing build...'
                             sh 'docker build -t myflaskapp .'
                             sh 'docker run -p 5000:5000 myflaskapp'
                             // Your build steps go here
-                        } else if (patch == '1') {
+                        } else if (patch == 1) {
                             // Exit the pipeline with a message if the last digit is 1
                             error 'Last digit is 1. Exiting without build.'
                         } else {
