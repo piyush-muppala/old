@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     environment {
         // Define the version pattern to match
         VERSION_PATTERN = /(\d+)\.(\d+)\.(\d+)/
