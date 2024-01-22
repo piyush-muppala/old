@@ -35,7 +35,7 @@ pipeline {
 
                             // Run Docker commands outside the script block
                             sh 'docker build -t myflaskapp .'
-                            sh 'docker run -p 5000:5000 myflaskapp'
+                            sh 'docker run -p 5000:5000 -d myflaskapp'
                             // Your build steps go here
                         } else if (patch == '1') {
                             // Exit the pipeline with a message if the last digit is 1
