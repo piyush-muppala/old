@@ -20,7 +20,7 @@ pipeline {
                     // Define the version pattern directly
                     def versionPattern = /.*?(\d+)\.(\d+)\.(\d+).*/
 
-                    // Extract version number from the commit message using regex step
+                    // Extract version number from the commit message
                     def match = commitMessage =~ versionPattern
 
                     // Check if the version number is extracted successfully
