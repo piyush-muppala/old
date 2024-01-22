@@ -1,16 +1,11 @@
 pipeline {
     agent any
 
-    environment {
-        // Define the version pattern to match
-        VERSION_PATTERN = Pattern.compile(".*?(\\d+)\\.(\\d+)\\.(\\d+).*")
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git
                 script {
+                    // Checkout the code from Git
                     checkout scm
                 }
             }
@@ -22,14 +17,17 @@ pipeline {
                     // Get the latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 
-                    // Extract version number from the commit message using Java Pattern and Matcher
-                    def matcher = VERSION_PATTERN.matcher(commitMessage)
+                    // Define the version pattern directly
+                    def versionPattern = /.*?(\d+)\.(\d+)\.(\d+).*/
+
+                    // Extract version number from the commit message
+                    def versionMatch = commitMessage =~ versionPattern
 
                     // Check if the version number matches the pattern
-                    if (matcher.matches()) {
-                        def major = matcher.group(1)
-                        def minor = matcher.group(2)
-                        def patch = matcher.group(3)
+                    if (versionMatch) {
+                        def major = versionMatch[0][1]
+                        def minor = versionMatch[0][2]
+                        def patch = versionMatch[0][3]
 
                         echo "Major: ${major}, Minor: ${minor}, Patch: ${patch}"
 
