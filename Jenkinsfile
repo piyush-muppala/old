@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Define the version pattern to match
-        VERSION_PATTERN = /(\d+)\.(\d+)\.(\d+)/
+        VERSION_PATTERN = Pattern.compile(".*?(\\d+)\\.(\\d+)\\.(\\d+).*")
     }
 
     stages {
@@ -22,29 +22,25 @@ pipeline {
                     // Get the latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 
-                    // Extract version number from the commit message
-                    def versionMatch = commitMessage =~ VERSION_PATTERN
+                    // Extract version number from the commit message using Java Pattern and Matcher
+                    def matcher = VERSION_PATTERN.matcher(commitMessage)
 
                     // Check if the version number matches the pattern
-                    if (versionMatch) {
-                        def versionInfo = versionMatch[0].findAll(/\d+/)
-
-                        // Extract major, minor, and patch versions
-                        def versionList = versionInfo.collect { it.toInteger() }
-                        def major = versionList[0]
-                        def minor = versionList[1]
-                        def patch = versionList[2]
+                    if (matcher.matches()) {
+                        def major = matcher.group(1)
+                        def minor = matcher.group(2)
+                        def patch = matcher.group(3)
 
                         echo "Major: ${major}, Minor: ${minor}, Patch: ${patch}"
 
                         // Check the last digit of the version
-                        if (patch == 0) {
+                        if (patch == '0') {
                             // Execute build if the last digit is 0
                             echo 'Executing build...'
                             sh 'docker build -t myflaskapp .'
                             sh 'docker run -p 5000:5000 myflaskapp'
                             // Your build steps go here
-                        } else if (patch == 1) {
+                        } else if (patch == '1') {
                             // Exit the pipeline with a message if the last digit is 1
                             error 'Last digit is 1. Exiting without build.'
                         } else {
