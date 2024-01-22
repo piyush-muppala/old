@@ -20,11 +20,15 @@ pipeline {
                     // Define the version pattern directly
                     def versionPattern = /.*?(\d+)\.(\d+)\.(\d+).*/
 
-                    // Extract version number from the commit message
-                    def (major, minor, patch) = (commitMessage =~ versionPattern).find { true }?.findAll { it.isNumber() } as List
+                    // Extract version number from the commit message using regex step
+                    def match = commitMessage =~ versionPattern
 
                     // Check if the version number is extracted successfully
-                    if (major && minor && patch) {
+                    if (match) {
+                        def major = match.group(1)
+                        def minor = match.group(2)
+                        def patch = match.group(3)
+
                         echo "Major: ${major}, Minor: ${minor}, Patch: ${patch}"
 
                         // Check the last digit of the version
