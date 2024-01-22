@@ -14,10 +14,12 @@ pipeline {
                     // Get the latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 
-                    // Check if the commit message contains the version information
-                    if (commitMessage.contains("update version to")) {
-                        // Extract the version information
-                        def version = commitMessage.tokenize(" ")[-1]
+                    // Check if the commit is associated with a tag
+                    def isTaggedCommit = sh(script: 'git describe --exact-match HEAD', returnStatus: true) == 0
+
+                    if (isTaggedCommit) {
+                        // Extract the version information from the tag
+                        def version = sh(script: 'git describe --tags --abbrev=0', returnStdout: true).trim()
 
                         // Split the version into major, minor, and patch
                         def versionParts = version.split('\\.')
@@ -35,7 +37,7 @@ pipeline {
 
                             // Run Docker commands outside the script block
                             sh 'docker build -t myflaskapp .'
-                            sh 'docker run -p 5000:5000 -d myflaskapp'
+                            sh 'docker run -p 5000:5000 myflaskapp'
                             // Your build steps go here
                         } else if (patch == '1') {
                             // Exit the pipeline with a message if the last digit is 1
@@ -45,8 +47,8 @@ pipeline {
                             echo 'Custom logic for other cases...'
                         }
                     } else {
-                        // Handle cases where version information is not found
-                        echo 'Version information not found in commit message.'
+                        // Handle cases where the commit is not associated with a tag
+                        echo 'Commit is not associated with a tag. Skipping version check.'
                     }
                 }
             }
