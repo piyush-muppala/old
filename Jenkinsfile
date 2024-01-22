@@ -9,9 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    checkout scm
-                }
+                checkout scm
             }
         }
 
@@ -21,7 +19,7 @@ pipeline {
                     // Get the latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 
-                    // Extract version number from the commit message
+                    // Move regex matching logic outside the script block
                     def versionMatch = commitMessage =~ VERSION_PATTERN
 
                     // Check if the version number matches the pattern
