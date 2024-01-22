@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        // Define the version pattern to match
-        VERSION_PATTERN = /(\d+)\.(\d+)\.(\d+)/
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -19,15 +14,17 @@ pipeline {
                     // Get the latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 
-                    // Move regex matching logic outside the script block
-                    def versionMatch = commitMessage =~ VERSION_PATTERN
+                    // Check if the commit message contains the version information
+                    if (commitMessage.contains("update version to")) {
+                        // Extract the version information
+                        def version = commitMessage.tokenize(" ")[-1]
 
-                    // Check if the version number matches the pattern
-                    if (versionMatch) {
-                        // Extract values from Matcher and assign to serializable variables
-                        def major = versionMatch[0][1] as String
-                        def minor = versionMatch[0][2] as String
-                        def patch = versionMatch[0][3] as String
+                        // Split the version into major, minor, and patch
+                        def versionParts = version.split('\\.')
+
+                        def major = versionParts[0] as String
+                        def minor = versionParts[1] as String
+                        def patch = versionParts[2] as String
 
                         echo "Major: ${major}, Minor: ${minor}, Patch: ${patch}"
 
@@ -48,8 +45,8 @@ pipeline {
                             echo 'Custom logic for other cases...'
                         }
                     } else {
-                        // Handle cases where version number is not found
-                        echo 'Version number not found in commit message.'
+                        // Handle cases where version information is not found
+                        echo 'Version information not found in commit message.'
                     }
                 }
             }
