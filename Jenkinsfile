@@ -17,8 +17,15 @@ pipeline {
             }
         }
 
+
+
+    
+
         stage('Check Version and Build') {
             steps {
+                when {
+                    branch 'master'
+                }
                 script {
                     // Get latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
