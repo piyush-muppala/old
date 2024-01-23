@@ -6,11 +6,11 @@ pipeline {
             steps {
                 script {
                     // Retrieve the branch name that triggered the build
-                    def branchName = env.BRANCH_NAME ?: 'master'
+                    def branchName = env.BRANCH_NAME ?: 'ops'
 
                     echo "Building on branch: ${branchName}"
 
-                    def repoURL = 'http://localhost:9000/git/root/old.git'
+                    def repoURL = 'https://github.com/piyush-muppala/old.git'
 
                     checkout([$class: 'GitSCM', branches: [[name: branchName]], userRemoteConfigs: [[url: repoURL]]])
                 }
