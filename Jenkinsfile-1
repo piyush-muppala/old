@@ -19,13 +19,7 @@ pipeline {
 
                     echo "Current Git commit: ${GIT_COMMIT}"
                     
-                    // Display the branch information based on the condition
-                    if (GIT_BRANCH == 'master') {
-                        echo 'Branch is master'
-                    } else {
-                        echo 'Branch is not master'
-                    }
-
+                    
                     // Checkout the Git commit
                     checkout([
                         $class: 'GitSCM',
