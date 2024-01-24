@@ -4,14 +4,33 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    // Retrieve the branch name that triggered the build
+                    def branchName = env.BRANCH_NAME ?: 'master'
+
+                    echo "Building on branch: ${branchName}"
+
+                    def repoURL = 'https://github.com/piyush-muppala/old.git'
+
+                    checkout([$class: 'GitSCM', branches: [[name: branchName]], userRemoteConfigs: [[url: repoURL]]])
+                }
             }
         }
 
         stage('Check Version and Build') {
+            when {
+                expression {
+                    // Define variables
+                    def GIT_BRANCH = 'origin/' + sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    def FORCE_FULL_BUILD = params.FORCE_FULL_BUILD ?: false
+
+                    // Condition for full build
+                    return GIT_BRANCH == 'origin/master' || FORCE_FULL_BUILD
+                }
+            }
             steps {
                 script {
-                    // Get the latest commit message
+                    // Get latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
 
                     // Check if the commit is associated with a tag
@@ -35,20 +54,13 @@ pipeline {
                             // Execute build if the last digit is 0
                             echo 'Executing build...'
 
-                            // Run Docker commands outside the script block
-                            sh 'docker build -t mflaskapp .'
-                            sh 'docker run -p 3000:3000 -d mflaskapp'
-                            // Your build steps go here
-                        } else if (patch == '1') {
-                            // Exit the pipeline with a message if the last digit is 1
-                            error 'Last digit is 1. Exiting without build.'
+                            sh 'docker-compose down && docker-compose up -d'
                         } else {
-                            // Handle other cases if needed
-                            echo 'Custom logic for other cases...'
+                            // minor versions
+                            error "Minor version detected (last digit is not 0). Exiting without build."
                         }
                     } else {
-                        // Handle cases where the commit is not associated with a tag
-                        echo 'Commit is not associated with a tag. Skipping version check.'
+                        echo 'Commit is not associated with a tag. Skipping version check, Skipping build'
                     }
                 }
             }
