@@ -2,7 +2,7 @@ pipeline {
     agent any
     parameters {
         string(
-            defaultValue: '*',
+            defaultValue: 'master',
             description: '',
             name: 'BRANCH_PATTERN'
         )
