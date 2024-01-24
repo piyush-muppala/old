@@ -13,7 +13,7 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: "origin/${BRANCH_PATTERN}"]],
+                    branches: [[name: "origin/${params.BRANCH_PATTERN}"]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [[$class: 'LocalBranch']],
                     submoduleCfg: [],
