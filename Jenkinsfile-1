@@ -1,32 +1,32 @@
 pipeline {
     agent any
-    parameters {
-        string(
-            defaultValue: 'master',
-            description: '',
-            name: 'BRANCH_PATTERN'
-        )
-    }
 
     stages {
         stage('Prepare') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "origin/${params.BRANCH_PATTERN}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'LocalBranch']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/piyush-muppala/old.git']]
-                ])
+                script {
+                    def GIT_BRANCH = sh(
+                        returnStdout: true,
+                        script: 'git rev-parse --abbrev-ref HEAD'
+                    ).trim()
+
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "origin/${GIT_BRANCH}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/piyush-muppala/old.git']]
+                    ])
+                }
             }
         }
 
         stage('Build') {
             when {
                 expression {
-                    def GIT_BRANCH = 'origin/' + sh(
+                    def GIT_BRANCH = sh(
                         returnStdout: true,
                         script: 'git rev-parse --abbrev-ref HEAD'
                     ).trim()
@@ -41,7 +41,7 @@ pipeline {
         stage('Build Skipped') {
             when {
                 expression {
-                    def GIT_BRANCH = 'origin/' + sh(
+                    def GIT_BRANCH = sh(
                         returnStdout: true,
                         script: 'git rev-parse --abbrev-ref HEAD'
                     ).trim()
