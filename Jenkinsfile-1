@@ -35,7 +35,6 @@ pipeline {
         stage('Build master') {
             when {
                 expression {
-                    // Add your conditions based on the branch or commit
                     return GIT_BRANCH == 'origin/master'
                 }
             }
@@ -47,7 +46,6 @@ pipeline {
         stage('Build ops') {
             when {
                 expression {
-                    // Corrected the equality check here
                     return GIT_BRANCH == 'origin/ops'
                 }
             }
@@ -59,7 +57,6 @@ pipeline {
         stage('Build master and ops') {
             when {
                 expression {
-                    // Add your conditions based on the branch or commit
                     return GIT_BRANCH in ['origin/master', 'origin/ops']
                 }
             }
