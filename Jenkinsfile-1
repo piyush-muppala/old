@@ -1,43 +1,50 @@
 pipeline {
     agent any
     parameters {
-        string (
+        string(
             defaultValue: '*',
             description: '',
-            name : 'BRANCH_PATTERN')
-        
+            name: 'BRANCH_PATTERN'
+        )
     }
 
     stages {
-        stage ('Prepare') {
+        stage('Prepare') {
             steps {
-                checkout([$class: 'GitSCM',
+                checkout([
+                    $class: 'GitSCM',
                     branches: [[name: "origin/${BRANCH_PATTERN}"]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [[$class: 'LocalBranch']],
                     submoduleCfg: [],
                     userRemoteConfigs: [[
-                        url: 'https://github.com/piyush-muppala/old.git']]])
+                        url: 'https://github.com/piyush-muppala/old.git']]
+                ])
             }
         }
 
-        stage ('Build') {
+        stage('Build') {
             when {
                 expression {
-                    GIT_BRANCH = 'origin/' + sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    def GIT_BRANCH = 'origin/' + sh(
+                        returnStdout: true,
+                        script: 'git rev-parse --abbrev-ref HEAD'
+                    ).trim()
                     return GIT_BRANCH == 'origin/master'
                 }
             }
             steps {
                 echo 'master'
-
             }
+        }
 
-
-        stage ('Build Skipped') {
+        stage('Build Skipped') {
             when {
                 expression {
-                    GIT_BRANCH = 'origin/' + sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    def GIT_BRANCH = 'origin/' + sh(
+                        returnStdout: true,
+                        script: 'git rev-parse --abbrev-ref HEAD'
+                    ).trim()
                     return !(GIT_BRANCH == 'origin/master')
                 }
             }
@@ -46,4 +53,4 @@ pipeline {
             }
         }
     }
-}    
+}
