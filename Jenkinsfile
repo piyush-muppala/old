@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     // Retrieve the branch name that triggered the build
-                    def branchName = env.BRANCH_NAME ?: 'master'
+                    def branchName = env.BRANCH_NAME ?: 'origin/master'
 
                     echo "Building on branch: ${branchName}"
 
