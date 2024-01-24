@@ -34,6 +34,7 @@ pipeline {
                         if (patch == '0') {
                             // Execute build if the last digit is 0
                             echo 'Executing build...'
+                            sh 'docker-compose build'
 
                             sh 'docker-compose down && docker-compose up -d'
                         } else {
