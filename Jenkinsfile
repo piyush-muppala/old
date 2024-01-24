@@ -17,13 +17,18 @@ pipeline {
             }
         }
 
-
-
-    
-
         stage('Check Version and Build') {
+            when {
+                expression {
+                    // Define variables
+                    def GIT_BRANCH = 'origin/' + sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    def FORCE_FULL_BUILD = params.FORCE_FULL_BUILD ?: false
+
+                    // Condition for full build
+                    return GIT_BRANCH == 'origin/master' || FORCE_FULL_BUILD
+                }
+            }
             steps {
-                
                 script {
                     // Get latest commit message
                     def commitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
