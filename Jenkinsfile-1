@@ -20,16 +20,16 @@ pipeline {
                     echo "Current Git commit: ${GIT_COMMIT}"
                     
                     // Display the branch information based on the condition
-                    if (GIT_BRANCH == 'master') {
+                    if (GIT_BRANCH == 'origin/master') {
                         echo 'Branch is master'
                     } else {
                         echo 'Branch is not master'
                     }
 
-                    // Checkout the Git branch instead of a specific commit
+                    // Checkout the Git commit
                     checkout([
                         $class: 'GitSCM',
-                        branches: [[name: 'origin/master']],
+                        branches: [[name: GIT_COMMIT]],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[$class: 'LocalBranch']],
                         submoduleCfg: [],
