@@ -85,8 +85,9 @@ pipeline {
                         if (patch == '0') {
                             // Execute build if the last digit is 0
                             echo 'Executing build...'
-
-                            sh 'docker-compose down && docker-compose up -d'
+                            sh 'docker network rm declarative-pl_default'
+                            sh 'docker-compose build'
+                            sh 'docker-compose up -d'
                         } else {
                             // minor versions
                             error "Minor version detected (last digit is not 0). Exiting without build."
