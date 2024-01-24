@@ -26,10 +26,10 @@ pipeline {
                         echo 'Branch is not master'
                     }
 
-                    // Checkout the Git commit
+                    // Checkout the Git branch instead of a specific commit
                     checkout([
                         $class: 'GitSCM',
-                        branches: [[name: GIT_COMMIT]],
+                        branches: [[name: 'origin/master']],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[$class: 'LocalBranch']],
                         submoduleCfg: [],
