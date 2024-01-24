@@ -43,7 +43,7 @@ pipeline {
             when {
                 expression {
                     // Add your conditions based on the branch or commit
-                    return GIT_BRANCH == 'master'
+                    return GIT_BRANCH == 'origin/master'
                 }
             }
             steps {
@@ -55,7 +55,7 @@ pipeline {
             when {
                 expression {
                     // Add your conditions based on the branch or commit
-                    return GIT_BRANCH != 'master'
+                    return GIT_BRANCH != 'origin/master'
                 }
             }
             steps {
