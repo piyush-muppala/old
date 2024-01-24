@@ -10,9 +10,13 @@ pipeline {
                         script: 'git rev-parse --abbrev-ref HEAD'
                     ).trim()
 
+                    echo "Current Git branch: ${GIT_BRANCH}"
+
+                    // Assuming that you want to use the same branch for all subsequent stages
+                    // If you want to dynamically change the branch based on the commit, additional logic is needed
                     checkout([
                         $class: 'GitSCM',
-                        branches: [[name: "origin/${GIT_BRANCH}"]],
+                        branches: [[name: "${GIT_BRANCH}"]],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[$class: 'LocalBranch']],
                         submoduleCfg: [],
