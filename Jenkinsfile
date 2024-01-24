@@ -4,30 +4,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    // Retrieve the branch name that triggered the build
-                    def branchName = env.BRANCH_NAME ?: 'ops'
-
-                    echo "Building on branch: ${branchName}"
-
-                    def repoURL = 'https://github.com/piyush-muppala/old.git'
-
-                    checkout([$class: 'GitSCM', branches: [[name: branchName]], userRemoteConfigs: [[url: repoURL]]])
-                }
+                checkout scm
             }
         }
 
         stage('Check Version and Build') {
-            when {
-                expression {
-                    // Define variables
-                    def GIT_BRANCH = 'origin/' + sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
-                    def FORCE_FULL_BUILD = params.FORCE_FULL_BUILD ?: false
-
-                    // Condition for full build
-                    return GIT_BRANCH == 'origin/master' || FORCE_FULL_BUILD
-                }
-            }
             steps {
                 script {
                     // Get latest commit message
