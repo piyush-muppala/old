@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build master') {
             when {
                 expression {
                     // Add your conditions based on the branch or commit
@@ -41,19 +41,19 @@ pipeline {
                 }
             }
             steps {
-                echo 'Build stage for master branch'
+                echo 'Build master files'
             }
         }
 
-        stage('Build Skipped') {
+        stage('Build ops') {
             when {
                 expression {
                     // Add your conditions based on the branch or commit
-                    return GIT_BRANCH != 'origin/master'
+                    return GIT_BRANCH = 'origin/ops'
                 }
             }
             steps {
-                echo 'Skipped full build for non-master branch.'
+                echo 'building ops files'
             }
         }
     }
