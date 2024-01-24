@@ -19,8 +19,6 @@ pipeline {
 
                     echo "Current Git commit: ${GIT_COMMIT}"
 
-                    echo "Current Git branch: ${GIT_BRANCH}"
-
                     // Checkout the Git commit
                     checkout([
                         $class: 'GitSCM',
@@ -55,6 +53,18 @@ pipeline {
             }
             steps {
                 echo 'Building ops files'
+            }
+        }
+
+        stage('Build master and ops') {
+            when {
+                expression {
+                    // Add your conditions based on the branch or commit
+                    return GIT_BRANCH in ['origin/master', 'origin/ops']
+                }
+            }
+            steps {
+                echo 'Build master files and ops files'
             }
         }
     }
