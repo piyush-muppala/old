@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Prepare') {
+            steps {
+                script {
+                    // Retrieve the current Git commit
+                    def GIT_COMMIT = sh(
+                        returnStdout: true,
+                        script: 'git rev-parse HEAD'
+                    ).trim()
+
+                    // Retrieve the current Git branch
+                    def GIT_BRANCH = sh(
+                        returnStdout: true,
+                        script: 'git rev-parse --abbrev-ref HEAD'
+                    ).trim()
+
+                    echo "Current Git commit: ${GIT_COMMIT}"
+                    
+                    // Display the branch information based on the condition
+                    if (GIT_BRANCH == 'master') {
+                        echo 'Branch is master'
+                    } else {
+                        echo 'Branch is not master'
+                    }
+
+                    // Checkout the Git commit
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: GIT_COMMIT]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[url: 'https://github.com/piyush-muppala/old.git']]
+                    ])
+                }
+            }
+        }
+
+        stage('Build') {
+            when {
+                expression {
+                    // Add your conditions based on the branch or commit
+                    return GIT_BRANCH == 'origin/master'
+                }
+            }
+            steps {
+                echo 'Build stage for master branch'
+            }
+        }
+
+        stage('Build Skipped') {
+            when {
+                expression {
+                    // Add your conditions based on the branch or commit
+                    return GIT_BRANCH != 'origin/master'
+                }
+            }
+            steps {
+                echo 'Skipped full build for non-master branch.'
+            }
+        }
+    }
+}
