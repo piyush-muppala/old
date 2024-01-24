@@ -19,6 +19,8 @@ pipeline {
 
                     echo "Current Git commit: ${GIT_COMMIT}"
 
+                    echo "Current Git branch: ${GIT_BRANCH}"
+
                     // Checkout the Git commit
                     checkout([
                         $class: 'GitSCM',
