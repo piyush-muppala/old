@@ -92,7 +92,7 @@ pipeline {
                             error "Minor version detected (last digit is not 0). Exiting without build."
                         }
                     } else {
-                        echo 'Commit is not associated with a tag. Skipping version check Skipping build'
+                        echo 'Commit is not associated with a tag. Skipping version check, Skipping build'
                     }
                 }
             }
