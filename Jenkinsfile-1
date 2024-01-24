@@ -5,18 +5,16 @@ pipeline {
         stage('Prepare') {
             steps {
                 script {
-                    def GIT_BRANCH = sh(
+                    def GIT_COMMIT = sh(
                         returnStdout: true,
-                        script: 'git rev-parse --abbrev-ref HEAD'
+                        script: 'git rev-parse HEAD'
                     ).trim()
 
-                    echo "Current Git branch: ${GIT_BRANCH}"
+                    echo "Current Git commit: ${GIT_COMMIT}"
 
-                    // Assuming that you want to use the same branch for all subsequent stages
-                    // If you want to dynamically change the branch based on the commit, additional logic is needed
                     checkout([
                         $class: 'GitSCM',
-                        branches: [[name: "${GIT_BRANCH}"]],
+                        branches: [[name: GIT_COMMIT]],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[$class: 'LocalBranch']],
                         submoduleCfg: [],
@@ -30,26 +28,20 @@ pipeline {
         stage('Build') {
             when {
                 expression {
-                    def GIT_BRANCH = sh(
-                        returnStdout: true,
-                        script: 'git rev-parse --abbrev-ref HEAD'
-                    ).trim()
-                    return GIT_BRANCH == 'origin/master'
+                    // Add your condition here based on the branch or commit
+                    return true
                 }
             }
             steps {
-                echo 'master'
+                echo 'Build stage'
             }
         }
 
         stage('Build Skipped') {
             when {
                 expression {
-                    def GIT_BRANCH = sh(
-                        returnStdout: true,
-                        script: 'git rev-parse --abbrev-ref HEAD'
-                    ).trim()
-                    return !(GIT_BRANCH == 'origin/master')
+                    // Add your condition here based on the branch or commit
+                    return false
                 }
             }
             steps {
