@@ -18,8 +18,7 @@ pipeline {
                     ).trim()
 
                     echo "Current Git commit: ${GIT_COMMIT}"
-                    
-                    
+
                     // Checkout the Git commit
                     checkout([
                         $class: 'GitSCM',
@@ -48,12 +47,12 @@ pipeline {
         stage('Build ops') {
             when {
                 expression {
-                    // Add your conditions based on the branch or commit
-                    return GIT_BRANCH = 'origin/ops'
+                    // Corrected the equality check here
+                    return GIT_BRANCH == 'origin/ops'
                 }
             }
             steps {
-                echo 'building ops files'
+                echo 'Building ops files'
             }
         }
     }
